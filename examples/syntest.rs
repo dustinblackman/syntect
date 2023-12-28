@@ -49,10 +49,10 @@ pub static SYNTAX_TEST_HEADER_PATTERN: Lazy<Regex> = Lazy::new(|| {
 });
 pub static SYNTAX_TEST_ASSERTION_PATTERN: Lazy<Regex> = Lazy::new(|| {
     Regex::new(
-        r#"(?xm)
+        r"(?xm)
     \s*(?:
         (?P<begin_of_token><-)|(?P<range>\^+)
-    )(.*)$"#,
+    )(.*)$",
     )
     .unwrap()
 });

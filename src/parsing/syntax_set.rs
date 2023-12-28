@@ -488,7 +488,10 @@ impl SyntaxSetBuilder {
         for entry in crate::utils::walk_dir(folder).sort_by(|a, b| a.file_name().cmp(b.file_name())) {
             let entry = entry.map_err(LoadingError::WalkDir)?;
             if entry.path().extension().map_or(false, |e| e == "sublime-syntax") {
-                let syntax = load_syntax_file(entry.path(), lines_include_newline)?;
+                let syntax_res = load_syntax_file(entry.path(), lines_include_newline);
+                if syntax_res.is_err() {
+                    continue;
+                }
                 if let Some(path_str) = entry.path().to_str() {
                     // Split the path up and rejoin with slashes so that syntaxes loaded on Windows
                     // can still be loaded the same way.
@@ -496,7 +499,7 @@ impl SyntaxSetBuilder {
                     let path_parts: Vec<_> = path.iter().map(|c| c.to_str().unwrap()).collect();
                     self.path_syntaxes.push((path_parts.join("/").to_string(), self.syntaxes.len()));
                 }
-                self.syntaxes.push(syntax);
+                self.syntaxes.push(syntax_res.unwrap());
             }
 
             #[cfg(feature = "metadata")]
